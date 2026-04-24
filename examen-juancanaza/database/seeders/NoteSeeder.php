@@ -2,32 +2,38 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Note;
+use App\Models\User;
+use App\Models\Category;
 
 class NoteSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
 {
-    $user = \App\Models\User::create([
-        'name' => 'Juan David Canaza',
-        'email' => 'juandavid@uatf.edu.bo',
-        'password' => bcrypt('123456'), 
-    ]);
+    $users = \App\Models\User::all();
+    $categories = \App\Models\Category::all();
+    $admin = \App\Models\User::where('email', 'admin@uatf.bo')->first();
 
+    if ($categories->isEmpty()) {
+        $this->command->error("No hay categorías. Ejecuta primero el CategorySeeder.");
+        return;
+    }
+
+    for ($i = 0; $i < 15; $i++) {
+       
+        $note = \App\Models\Note::factory()->create([
+            'category_id' => $categories->random()->id,
+        ]);
+
+        
+        $note->users()->attach($admin->id, ['role' => 'owner']);
+
+        
+        $otro = $users->where('id', '!=', $admin->id)->random();
+        $note->users()->attach($otro->id, ['role' => 'editor']);
+    }
     
-    $cat = \App\Models\Category::create(['name' => 'Exámenes']);
-
-    $nota = \App\Models\Note::create([
-        'title' => 'Proyecto Final Backend',
-        'content' => 'Terminar las relaciones de Eloquent',
-        'priority' => 1,
-        'category_id' => $cat->id
-    ]);
-
-    $user->notes()->attach($nota->id, ['role' => 'owner']);
+    $this->command->info("¡Se crearon 15 notas con sus relaciones!");
 }
 }

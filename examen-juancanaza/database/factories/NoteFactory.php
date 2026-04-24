@@ -16,12 +16,13 @@ class NoteFactory extends Factory
      * @return array<string, mixed>
      */
     public function definition(): array
-    {
-       return [
-    'title' => $this->faker->sentence(),
-    'content' => $this->faker->paragraph(),
-    'priority' => $this->faker->numberBetween(1, 5),
-    'category_id' => \App\Models\Category::factory(), // Crea una categoría automáticamente
-];
-    }
+{
+    return [
+        'title' => $this->faker->sentence(3),
+        'content' => $this->faker->paragraph(),
+        'priority' => $this->faker->randomElement(['low', 'medium', 'high']),
+        'is_public' => false,
+        'category_id' => 1, 
+    ];
+}
 }

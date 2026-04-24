@@ -12,14 +12,14 @@ return new class extends Migration
    public function up(): void
 {
     Schema::create('notes', function (Blueprint $table) {
-        $table->id();
-        $table->string('title');
-        $table->text('content');
-        $table->integer('priority');
-        // Relación con categorías: no permite borrar categorías con notas
-        $table->foreignId('category_id')->constrained()->onDelete('restrict');
-        $table->timestamps();
-    });
+    $table->id();
+    $table->string('title');
+    $table->text('content');
+    $table->string('priority');
+    $table->boolean('is_public')->default(false); 
+    $table->foreignId('category_id')->constrained()->onDelete('cascade');
+    $table->timestamps();
+});
 }
 
     /**
